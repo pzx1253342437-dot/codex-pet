@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111216">
+  <title>小码 · Codex 桌宠</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body data-skin="ink">
+  <main class="window" id="window">
+    <div class="top-actions no-drag">
+      <button class="chip" id="skinBtn" type="button">换肤</button>
+      <button class="icon-btn" id="closeBtn" type="button" aria-label="关闭">×</button>
+    </div>
+
+    <section class="bubble" id="bubble" aria-live="polite">
+      <div class="bubble-head drag-zone">
+        <div>
+          <span class="pet-name">小码</span>
+          <span class="pet-sub">Codex 桌宠</span>
+        </div>
+        <span class="provider" id="provider"></span>
+      </div>
+
+      <div class="empty-state" id="emptyState">
+        <p class="empty-main">把链接拖到我嘴里。</p>
+        <p class="empty-hint">网页、视频都行。视频没字幕，我会先啃标题和简介。</p>
+      </div>
+
+      <div class="loading hidden" id="loading">
+        <span class="loading-dots"><i></i><i></i><i></i></span>
+        <p id="loadingText">正在读页面...</p>
+      </div>
+
+      <article class="result hidden" id="result">
+        <div class="result-meta">
+          <span id="resultType"></span>
+          <span id="resultSite"></span>
+        </div>
+        <h2 id="resultTitle"></h2>
+        <p class="tldr" id="resultTldr"></p>
+        <ul class="bullets" id="resultBullets"></ul>
+        <p class="warning hidden" id="resultWarning"></p>
+        <button class="long-toggle hidden" id="longToggle" type="button">展开长摘要</button>
+        <div class="long-summary hidden" id="longSummary"></div>
+        <div class="result-actions">
+          <button class="ghost-button" id="openSource" type="button">打开原页面</button>
+          <button class="ghost-button" id="clearResult" type="button">再喂一个</button>
+        </div>
+      </article>
+
+      <div class="error hidden" id="error">
+        <p id="errorText"></p>
+        <button class="ghost-button" id="clearError" type="button">再来一次</button>
+      </div>
+    </section>
+
+    <div class="paste-row no-drag">
+      <input id="urlInput" type="url" placeholder="也可以粘贴链接" autocomplete="off" spellcheck="false">
+      <button id="sendBtn" type="button">喂它</button>
+    </div>
+
+    <div class="pet-wrap" id="petWrap">
+      <div class="pet-halo"></div>
+      <div class="pet-stage">
+      <svg class="pet" viewBox="0 0 260 300" role="img" aria-label="小码桌宠">
+        <ellipse class="pet-shadow" cx="130" cy="282" rx="76" ry="11"/>
+        <path class="tail" d="M196 236 C238 224 246 184 218 174 C198 168 194 194 214 198"/>
+        <path class="body" d="M64 238 C42 205 42 151 64 116 C81 88 104 74 130 74 C156 74 179 88 196 116 C218 151 218 205 196 238 C176 266 84 266 64 238 Z"/>
+        <path class="ear" d="M72 113 L56 57 L108 87 Z"/>
+        <path class="ear" d="M188 113 L204 57 L152 87 Z"/>
+        <path class="ear-inner" d="M79 104 L69 72 L100 91 Z"/>
+        <path class="ear-inner" d="M181 104 L191 72 L160 91 Z"/>
+        <ellipse class="face" cx="130" cy="176" rx="65" ry="57"/>
+        <ellipse class="eye" cx="104" cy="168" rx="7" ry="10"/>
+        <ellipse class="eye" cx="156" cy="168" rx="7" ry="10"/>
+        <circle class="eye-shine" cx="106" cy="164" r="2.4"/>
+        <circle class="eye-shine" cx="158" cy="164" r="2.4"/>
+        <ellipse class="cheek" cx="83" cy="190" rx="10" ry="5"/>
+        <ellipse class="cheek" cx="177" cy="190" rx="10" ry="5"/>
+        <path class="mouth" d="M117 190 Q130 203 143 190"/>
+        <ellipse class="mouth-inner" cx="130" cy="194" rx="9" ry="5"/>
+        <path class="belly" d="M101 231 C108 214 152 214 159 231 C151 247 109 247 101 231 Z"/>
+        <g class="accessory star">
+          <path d="M196 94 L201 105 L213 107 L204 115 L207 127 L196 121 L185 127 L188 115 L179 107 L191 105 Z"/>
+        </g>
+        <g class="accessory antenna">
+          <path d="M130 73 C130 55 146 50 151 36"/>
+          <circle cx="153" cy="32" r="6"/>
+        </g>
+        <g class="accessory glasses">
+          <circle cx="104" cy="168" r="14"/>
+          <circle cx="156" cy="168" r="14"/>
+          <path d="M118 168 H142"/>
+        </g>
+      </svg>
+      <button class="mouth-drop no-drag" id="mouthDrop" type="button" aria-label="把链接拖到这里">
+        <span>拖到这里</span>
+      </button>
+      </div>
+      <div class="drop-hint" id="dropHint">把链接拖到嘴里</div>
+    </div>
+
+    <div class="skin-menu hidden no-drag" id="skinMenu">
+      <button type="button" data-skin="ink"><i class="swatch ink"></i>墨墨</button>
+      <button type="button" data-skin="cloud"><i class="swatch cloud"></i>云朵</button>
+      <button type="button" data-skin="circuit"><i class="swatch circuit"></i>电路兔</button>
+    </div>
+  </main>
+  <script src="./app.js"></script>
+</body>
+</html>
