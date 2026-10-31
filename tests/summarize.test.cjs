@@ -1,6 +1,14 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { normalizeUrl, getYouTubeId, extractPage, extractBilibiliPage, isVideoUrl } = require('../src/extract.cjs');
+const {
+  normalizeUrl,
+  getYouTubeId,
+  extractPage,
+  extractBilibiliPage,
+  isVideoUrl,
+  pickBilibiliSubtitleTrack,
+  parseBilibiliSubtitleBody
+} = require('../src/extract.cjs');
 const { summarizeLocally, splitSentences, uniqueSentences } = require('../src/local-summary.cjs');
 const { formatDuration, buildVideoInfoSummary } = require('../src/summarize.cjs');
 
@@ -19,6 +27,27 @@ test('isVideoUrl 不会把腾讯新闻当成视频', () => {
   assert.equal(isVideoUrl('https://v.qq.com/x/cover/test.html'), true);
   assert.equal(isVideoUrl('https://news.qq.com/rain/a/20260101A00000'), false);
   assert.equal(isVideoUrl('https://www.bilibili.com/video/BV1TEST00001'), true);
+});
+
+test('B 站字幕接口能区分登录限制和可用字幕', () => {
+  const locked = pickBilibiliSubtitleTrack({
+    data: { need_login_subtitle: true, subtitle: { subtitles: [] } }
+  });
+  assert.equal(locked.reason, 'login-required');
+
+  const available = pickBilibiliSubtitleTrack({
+    data: {
+      need_login_subtitle: false,
+      subtitle: {
+        subtitles: [
+          { lan: 'en-US', subtitle_url: '//example.com/en.json' },
+          { lan: 'zh-CN', subtitle_url: '//example.com/zh.json' }
+        ]
+      }
+    }
+  });
+  assert.equal(available.track.lan, 'zh-CN');
+  assert.equal(parseBilibiliSubtitleBody({ body: [{ content: '第一句' }, { content: '第二句' }] }), '第一句 第二句');
 });
 
 test('extractPage 能读出标题、描述和正文', () => {

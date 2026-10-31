@@ -24,6 +24,7 @@
 - electron/main.cjs 透明窗口、置顶、IPC、截图模式
 - electron/preload.cjs 暴露摘要、打开链接、关闭窗口
 - src/extract.cjs 网页抓取、正文和元数据提取、YouTube 字幕
+- src/env.cjs 读取本地 .env
 - src/local-summary.cjs 本地抽取式摘要
 - src/ai-summary.cjs 可选的大模型摘要
 - src/summarize.cjs 抓取、字幕、摘要的总流程
@@ -45,6 +46,7 @@
 - 不配置 AI 时，链接只在本地进程里抓取
 - 配置 AI 后，正文和链接会发给所配置的模型服务
 - 不下载视频文件，不绕过登录、付费墙和地区限制
+- B 站字幕需要登录时，只使用本机 BILIBILI_COOKIE 请求字幕接口
 - 改摘要流程、拖拽或界面，同步更新 README.md、tests 和 memory/project_pet.md
 - memory/ 只保留在本地，不提交到公开仓库
 

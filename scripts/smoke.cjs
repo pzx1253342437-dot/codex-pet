@@ -1,4 +1,7 @@
 const { summarizeUrl } = require('../src/summarize.cjs');
+const { loadEnv } = require('../src/env.cjs');
+
+loadEnv();
 
 const url = process.argv[2] || 'https://example.com';
 

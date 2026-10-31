@@ -280,7 +280,8 @@ async function fetchText(url, options) {
       headers: {
         'User-Agent': USER_AGENT,
         'Accept': 'text/html,application/xhtml+xml,text/plain;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.7'
+        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.7',
+        ...((options && options.headers) || {})
       }
     });
     if (!response.ok) throw new Error('页面返回 ' + response.status);
@@ -367,26 +368,75 @@ async function fetchYouTubeOEmbed(videoId) {
   }
 }
 
+function pickBilibiliSubtitleTrack(payload) {
+  const player = payload && payload.data ? payload.data : {};
+  const subtitle = player.subtitle || {};
+  const tracks = Array.isArray(subtitle.subtitles) ? subtitle.subtitles : [];
+  if (!tracks.length) {
+    return {
+      track: null,
+      reason: player.need_login_subtitle ? 'login-required' : 'no-subtitle'
+    };
+  }
+  const track = tracks.find((item) => /^zh/i.test(item.lan || item.language || '')) || tracks[0];
+  return { track, reason: '' };
+}
+
+function parseBilibiliSubtitleBody(value) {
+  const data = typeof value === 'string' ? JSON.parse(value) : value;
+  const segments = Array.isArray(data && data.body)
+    ? data.body
+    : Array.isArray(data && data.subtitles)
+      ? data.subtitles
+      : [];
+  return segments
+    .map((item) => normalizeText(item && (item.content || item.text)))
+    .filter(Boolean)
+    .join(' ');
+}
+
 async function fetchBilibiliTranscript(video) {
-  const tracks = video && Array.isArray(video.subtitleTracks) ? video.subtitleTracks : [];
-  if (!tracks.length) return null;
-  const track = tracks.find((item) => /^zh/i.test(item.language || '')) || tracks[0];
+  const baseHeaders = {
+    Referer: 'https://www.bilibili.com/video/' + ((video && video.bvid) || ''),
+    Origin: 'https://www.bilibili.com'
+  };
+  const cookie = String(process.env.BILIBILI_COOKIE || '').trim();
+  const apiHeaders = cookie ? { ...baseHeaders, Cookie: cookie } : baseHeaders;
+  let tracks = [];
+  let reason = '';
+
+  if (video && video.aid && video.cid) {
+    try {
+      const page = await fetchText(
+        'https://api.bilibili.com/x/player/v2?aid=' + encodeURIComponent(video.aid) + '&cid=' + encodeURIComponent(video.cid),
+        { timeout: 20000, headers: { ...apiHeaders, Accept: 'application/json' } }
+      );
+      const picked = pickBilibiliSubtitleTrack(JSON.parse(page.body));
+      tracks = picked.track ? [picked.track] : [];
+      reason = picked.reason;
+    } catch {
+      reason = 'fetch-failed';
+    }
+  }
+
+  if (!tracks.length && video && Array.isArray(video.subtitleTracks)) {
+    tracks = video.subtitleTracks;
+  }
+
+  const track = tracks.find((item) => /^zh/i.test(item.lan || item.language || '')) || tracks[0];
+  if (!track) return { reason: reason || 'no-subtitle' };
+  const subtitleUrl = track.subtitle_url
+    ? absoluteUrl(track.subtitle_url, 'https://www.bilibili.com')
+    : track.url;
+  if (!subtitleUrl) return { reason: reason || 'no-subtitle' };
+
   try {
-    const page = await fetchText(track.url, { timeout: 20000 });
-    const data = JSON.parse(page.body);
-    const segments = Array.isArray(data.body)
-      ? data.body
-      : Array.isArray(data.subtitles)
-        ? data.subtitles
-        : [];
-    const text = segments
-      .map((item) => normalizeText(item && (item.content || item.text)))
-      .filter(Boolean)
-      .join(' ');
-    if (!text) return null;
-    return { text, language: track.language || '', source: 'bilibili-captions' };
+    const page = await fetchText(subtitleUrl, { timeout: 20000, headers: baseHeaders });
+    const text = parseBilibiliSubtitleBody(page.body);
+    if (!text) return { reason: 'empty-subtitle' };
+    return { text, language: track.lan || track.language || '', source: 'bilibili-captions' };
   } catch {
-    return null;
+    return { reason: 'fetch-failed' };
   }
 }
 
@@ -402,5 +452,7 @@ module.exports = {
   isBilibiliUrl,
   fetchYouTubeTranscript,
   fetchYouTubeOEmbed,
-  fetchBilibiliTranscript
+  fetchBilibiliTranscript,
+  pickBilibiliSubtitleTrack,
+  parseBilibiliSubtitleBody
 };

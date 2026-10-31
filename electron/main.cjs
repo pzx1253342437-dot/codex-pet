@@ -2,20 +2,7 @@ const { app, BrowserWindow, ipcMain, screen, shell } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const { summarizeUrl } = require('../src/summarize.cjs');
-
-function loadEnv() {
-  const file = path.join(__dirname, '..', '.env');
-  if (!fs.existsSync(file)) return;
-  for (const line of fs.readFileSync(file, 'utf8').split(/\r?\n/)) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith('#')) continue;
-    const index = trimmed.indexOf('=');
-    if (index < 0) continue;
-    const key = trimmed.slice(0, index).trim();
-    const value = trimmed.slice(index + 1).trim().replace(/^['"]|['"]$/g, '');
-    if (key && process.env[key] === undefined) process.env[key] = value;
-  }
-}
+const { loadEnv } = require('../src/env.cjs');
 
 loadEnv();
 

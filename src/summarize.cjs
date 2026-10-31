@@ -80,6 +80,7 @@ async function summarizeUrl(input) {
       });
 
   let transcript = null;
+  let transcriptNotice = '';
   if (youtubeId) {
     try {
       transcript = await fetchYouTubeTranscript(youtubeId);
@@ -88,7 +89,12 @@ async function summarizeUrl(input) {
     }
   }
   if (bilibili) {
-    transcript = await fetchBilibiliTranscript(bilibili);
+    const biliTranscript = await fetchBilibiliTranscript(bilibili);
+    if (biliTranscript && biliTranscript.text) {
+      transcript = biliTranscript;
+    } else if (biliTranscript && biliTranscript.reason) {
+      transcriptNotice = biliTranscript.reason;
+    }
   }
 
   if (!extracted.title && youtubeId) {
@@ -150,9 +156,15 @@ async function summarizeUrl(input) {
     warning = '页面正文读取不完整，摘要基于能拿到的信息。';
   }
   if (isVideo && !transcript && !warning) {
-    warning = bilibili
-      ? '没有拿到视频字幕，下面只有标题、作者、时长和简介。'
-      : '没有拿到视频字幕，摘要基于标题、简介和页面信息。';
+    if (transcriptNotice === 'login-required') {
+      warning = 'B 站字幕需要登录，当前只能读视频信息。把 BILIBILI_COOKIE 填进 .env 后重试。';
+    } else if (transcriptNotice === 'fetch-failed') {
+      warning = 'B 站字幕接口读取失败，当前只能读视频信息。';
+    } else {
+      warning = bilibili
+        ? '没有拿到视频字幕，下面只有标题、作者、时长和简介。'
+        : '没有拿到视频字幕，摘要基于标题、简介和页面信息。';
+    }
   }
   if (summary && summary.warning && !warning) warning = summary.warning;
 
@@ -180,7 +192,8 @@ async function summarizeUrl(input) {
       charCount: text.length,
       language: transcript ? transcript.language : '',
       duration: extracted.duration || 0,
-      tags: extracted.tags || []
+      tags: extracted.tags || [],
+      subtitleNotice: transcriptNotice
     }
   };
 }
