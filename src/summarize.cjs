@@ -38,14 +38,13 @@ function buildVideoInfoSummary(extracted) {
   if (duration) facts.push('时长 ' + duration);
   if (extracted.tags && extracted.tags.length) facts.push('标签 ' + extracted.tags.slice(0, 6).join('、'));
   const description = String(extracted.description || '').trim();
-  const lines = [description, ...facts].filter(Boolean);
   const tldr = description
     ? trimSentence(description, 220)
     : '视频页面没有提供可读字幕，这里只整理页面能读到的信息。';
   return {
     tldr,
     bullets: facts.slice(0, 4),
-    longSummary: lines.join('\n\n'),
+    longSummary: description.length > 220 ? description : '',
     keyPoints: facts.slice(0, 3),
     provider: 'local'
   };

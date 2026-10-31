@@ -113,7 +113,7 @@
     const longSummary = data.summary && data.summary.longSummary ? data.summary.longSummary : '';
     elements.longSummary.textContent = longSummary;
     elements.longSummary.classList.add('hidden');
-    const longLabel = data.isVideo && !hasTranscript ? '展开视频信息' : '展开长摘要';
+    const longLabel = data.isVideo && !hasTranscript ? '展开完整简介' : '展开长摘要';
     elements.longToggle.dataset.openLabel = longLabel;
     elements.longToggle.dataset.closeLabel = longLabel.replace('展开', '收起');
     elements.longToggle.textContent = longLabel;

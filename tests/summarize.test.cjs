@@ -98,4 +98,15 @@ test('视频没有字幕时只整理标题、作者、时长和标签', () => {
   assert.match(summary.tldr, /没有提供可读字幕/);
   assert.ok(summary.bullets.some((item) => item.includes('测试作者')));
   assert.ok(summary.bullets.some((item) => item.includes('3:33')));
+  assert.equal(summary.longSummary, '');
+
+  const longDescription = '这段简介比较长。'.repeat(30);
+  const withDescription = buildVideoInfoSummary({
+    title: '测试视频',
+    description: longDescription,
+    author: '测试作者',
+    duration: 213,
+    tags: []
+  });
+  assert.equal(withDescription.longSummary, longDescription);
 });
