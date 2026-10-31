@@ -431,7 +431,7 @@ async function fetchBilibiliTranscript(video) {
   if (!subtitleUrl) return { reason: reason || 'no-subtitle' };
 
   try {
-    const page = await fetchText(subtitleUrl, { timeout: 20000, headers: baseHeaders });
+    const page = await fetchText(subtitleUrl, { timeout: 20000, headers: apiHeaders });
     const text = parseBilibiliSubtitleBody(page.body);
     if (!text) return { reason: 'empty-subtitle' };
     return { text, language: track.lan || track.language || '', source: 'bilibili-captions' };

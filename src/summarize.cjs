@@ -157,7 +157,7 @@ async function summarizeUrl(input) {
   }
   if (isVideo && !transcript && !warning) {
     if (transcriptNotice === 'login-required') {
-      warning = 'B 站字幕需要登录，当前只能读视频信息。把 BILIBILI_COOKIE 填进 .env 后重试。';
+      warning = 'B 站字幕要登录才能读，当前只能读视频信息。';
     } else if (transcriptNotice === 'fetch-failed') {
       warning = 'B 站字幕接口读取失败，当前只能读视频信息。';
     } else {
@@ -183,6 +183,7 @@ async function summarizeUrl(input) {
     },
     provider: summary.provider || 'local',
     transcriptSource: transcript ? transcript.source : isVideo ? 'metadata' : '',
+    needsBiliLogin: Boolean(isVideo && !transcript && bilibili && transcriptNotice === 'login-required'),
     warning,
     meta: {
       description: extracted.description,

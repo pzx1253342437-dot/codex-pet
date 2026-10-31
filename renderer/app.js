@@ -17,6 +17,13 @@
     resultWarning: $('resultWarning'),
     longToggle: $('longToggle'),
     longSummary: $('longSummary'),
+    biliLogin: $('biliLogin'),
+    cookieBtn: $('cookieBtn'),
+    cookiePanel: $('cookiePanel'),
+    cookieInput: $('cookieInput'),
+    cookieNote: $('cookieNote'),
+    cookieSave: $('cookieSave'),
+    cookieCancel: $('cookieCancel'),
     openSource: $('openSource'),
     clearResult: $('clearResult'),
     error: $('error'),
@@ -70,6 +77,13 @@
     elements.longSummary.classList.add('hidden');
     elements.longToggle.classList.add('hidden');
     elements.resultWarning.classList.add('hidden');
+    elements.biliLogin.classList.add('hidden');
+    elements.biliLogin.disabled = false;
+    elements.biliLogin.textContent = '扫码登录';
+    elements.cookieBtn.classList.add('hidden');
+    elements.cookiePanel.classList.add('hidden');
+    elements.cookieNote.classList.add('hidden');
+    elements.cookieInput.value = '';
     elements.errorText.textContent = '';
     showOnly('empty');
   }
@@ -94,7 +108,9 @@
     currentResult = data;
     longOpen = false;
     const hasTranscript = Boolean(data.transcriptSource && data.transcriptSource !== 'metadata' && data.transcriptSource !== 'page');
-    elements.provider.textContent = data.provider === 'local' ? '本地摘要' : 'AI · ' + data.provider;
+    elements.provider.textContent = data.provider === 'local'
+      ? '本地摘要'
+      : data.provider === 'codex' ? 'Codex 摘要' : 'AI · ' + data.provider;
     elements.provider.classList.remove('hidden');
     elements.resultType.textContent = data.isVideo ? (hasTranscript ? '视频长摘要' : '视频信息') : '网页摘要';
     elements.resultSite.textContent = data.site || '';
@@ -122,6 +138,14 @@
     const warning = data.warning || '';
     elements.resultWarning.textContent = warning;
     elements.resultWarning.classList.toggle('hidden', !warning);
+
+    const needsLogin = Boolean(data.needsBiliLogin || (data.meta && data.meta.subtitleNotice === 'login-required'));
+    elements.biliLogin.classList.toggle('hidden', !needsLogin);
+    elements.cookieBtn.classList.toggle('hidden', !needsLogin);
+    elements.biliLogin.disabled = false;
+    elements.biliLogin.textContent = '扫码登录';
+    elements.cookiePanel.classList.add('hidden');
+    elements.cookieNote.classList.add('hidden');
 
     showOnly('result');
     elements.bubble.scrollTop = 0;
@@ -243,6 +267,64 @@
     if (currentResult && api) api.openExternal(currentResult.url);
   });
 
+  elements.biliLogin.addEventListener('click', async () => {
+    if (!api || !api.biliLogin) return;
+    const url = currentResult && currentResult.url;
+    elements.biliLogin.disabled = true;
+    elements.biliLogin.textContent = '登录中…';
+    let response = null;
+    try {
+      response = await api.biliLogin();
+    } catch {
+      response = null;
+    }
+    elements.biliLogin.disabled = false;
+    if (response && response.ok) {
+      elements.biliLogin.textContent = '已登录';
+      if (url) handleUrl(url);
+      return;
+    }
+    elements.biliLogin.textContent = '扫码登录';
+  });
+
+  elements.cookieBtn.addEventListener('click', () => {
+    elements.cookiePanel.classList.remove('hidden');
+    elements.cookieNote.classList.add('hidden');
+    elements.cookieInput.focus();
+  });
+
+  elements.cookieCancel.addEventListener('click', () => {
+    elements.cookiePanel.classList.add('hidden');
+    elements.cookieNote.classList.add('hidden');
+  });
+
+  elements.cookieSave.addEventListener('click', async () => {
+    if (!api || !api.biliCookie) return;
+    const value = elements.cookieInput.value.trim();
+    if (!value) {
+      elements.cookieNote.textContent = '把 Cookie 贴进来再保存。';
+      elements.cookieNote.classList.remove('hidden');
+      return;
+    }
+    const url = currentResult && currentResult.url;
+    elements.cookieSave.disabled = true;
+    let response = null;
+    try {
+      response = await api.biliCookie(value);
+    } catch {
+      response = null;
+    }
+    elements.cookieSave.disabled = false;
+    if (response && response.ok) {
+      elements.cookieInput.value = '';
+      elements.cookiePanel.classList.add('hidden');
+      if (url) handleUrl(url);
+      return;
+    }
+    elements.cookieNote.textContent = response && response.error ? response.error : 'Cookie 没存进去，再试一次。';
+    elements.cookieNote.classList.remove('hidden');
+  });
+
   elements.clearResult.addEventListener('click', () => {
     showEmpty();
     elements.urlInput.focus();
@@ -271,7 +353,9 @@
 
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
-      if (!elements.skinMenu.classList.contains('hidden')) {
+      if (!elements.cookiePanel.classList.contains('hidden')) {
+        elements.cookiePanel.classList.add('hidden');
+      } else if (!elements.skinMenu.classList.contains('hidden')) {
         elements.skinMenu.classList.add('hidden');
       } else {
         showEmpty();

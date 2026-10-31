@@ -271,6 +271,76 @@ button {
   line-height: 1.5;
 }
 
+.cookie-panel {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 10px;
+  z-index: 30;
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.cookie-title {
+  margin: 0;
+  color: var(--accent-2);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cookie-panel textarea {
+  width: 100%;
+  min-height: 64px;
+  max-height: 120px;
+  padding: 8px 9px;
+  resize: vertical;
+  color: var(--text);
+  background: rgba(27, 28, 35, 0.9);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  outline: none;
+  font: 11px/1.55 var(--sans);
+}
+
+.cookie-panel textarea:focus {
+  border-color: rgba(222, 111, 148, 0.65);
+}
+
+.cookie-panel-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.cookie-panel-actions button {
+  padding: 6px 11px;
+  border-radius: 7px;
+  font-size: 11px;
+}
+
+#cookieSave {
+  color: #171218;
+  background: var(--accent);
+  font-weight: 700;
+}
+
+#cookieCancel {
+  color: #d5d3da;
+  background: transparent;
+  border: 1px solid var(--line);
+}
+
+.cookie-note {
+  margin: 0;
+  color: #f0b9c7;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
 .long-toggle {
   margin-top: 13px;
   padding: 0;
@@ -296,6 +366,7 @@ button {
 
 .result-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin-top: 14px;
 }
@@ -312,6 +383,11 @@ button {
 .ghost-button:hover {
   color: #fff;
   border-color: rgba(222, 111, 148, 0.6);
+}
+
+.ghost-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
 }
 
 .error p {
@@ -422,17 +498,113 @@ body.has-result .pet-wrap {
   fill: rgba(0, 0, 0, 0.2);
 }
 
-.body,
-.face {
+.body {
   fill: var(--fur);
   stroke: var(--fur-2);
   stroke-width: 2;
 }
 
+.hair {
+  fill: var(--fur);
+}
+
+.hair-shine {
+  fill: none;
+  stroke: var(--inner);
+  stroke-width: 3;
+  stroke-linecap: round;
+  opacity: 0.75;
+}
+
+.face {
+  fill: var(--skin);
+  stroke: var(--skin-2);
+  stroke-width: 2;
+}
+
+.neck,
+.hand {
+  fill: var(--skin);
+  stroke: var(--skin-2);
+  stroke-width: 1.5;
+}
+
+.arm,
+.leg {
+  fill: none;
+  stroke: var(--skin);
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+
+.leg {
+  stroke: var(--fur);
+}
+
+.sleeve {
+  fill: var(--fur);
+  stroke: var(--fur-2);
+  stroke-width: 2;
+}
+
+.shoe {
+  fill: var(--inner);
+  stroke: var(--fur-2);
+  stroke-width: 2;
+}
+
+.trim {
+  fill: none;
+  stroke: var(--inner);
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+.collar {
+  fill: none;
+  stroke: var(--inner);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.belt {
+  fill: none;
+  stroke: var(--inner);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+}
+
+.belt-knot {
+  fill: var(--inner);
+}
+
+.cuff {
+  fill: none;
+  stroke: var(--inner);
+  stroke-width: 3;
+}
+
+.sock {
+  fill: none;
+  stroke: var(--inner);
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+
+.bow {
+  fill: var(--accent);
+}
+
+.bow-knot,
+.tail-tip,
+.nose {
+  fill: var(--inner);
+}
+
 .tail {
   fill: none;
   stroke: var(--fur);
-  stroke-width: 16;
+  stroke-width: 14;
   stroke-linecap: round;
   transform-box: fill-box;
   transform-origin: 10% 80%;
@@ -464,13 +636,24 @@ body.has-result .pet-wrap {
   fill: var(--eye-shine);
 }
 
+.eye-shine.small {
+  opacity: 0.8;
+}
+
+.lash {
+  fill: none;
+  stroke: var(--mouth);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
 .cheek {
   fill: var(--cheek);
 }
 
 .mouth {
   fill: none;
-  stroke: var(--eye);
+  stroke: var(--mouth);
   stroke-width: 2.5;
   stroke-linecap: round;
 }
@@ -481,11 +664,6 @@ body.has-result .pet-wrap {
   transform-box: fill-box;
   transform-origin: center;
   transition: transform 160ms ease, fill 160ms ease;
-}
-
-.belly {
-  fill: var(--fur-2);
-  opacity: 0.42;
 }
 
 .accessory {
@@ -519,8 +697,11 @@ body[data-skin="ink"] {
   --fur: #1c1d24;
   --fur-2: #2c2e39;
   --inner: #de6f94;
-  --eye: #ffe7ef;
-  --eye-shine: #de6f94;
+  --skin: #f3d4dc;
+  --skin-2: #d9aeb9;
+  --mouth: #43222d;
+  --eye: #e8547f;
+  --eye-shine: #ffffff;
   --cheek: rgba(222, 111, 148, 0.32);
   --glow: rgba(222, 111, 148, 0.28);
   --accent: #de6f94;
@@ -530,7 +711,10 @@ body[data-skin="cloud"] {
   --fur: #f4ede6;
   --fur-2: #e0d1c9;
   --inner: #efa7bd;
-  --eye: #27262c;
+  --skin: #f8e4da;
+  --skin-2: #dcc0b4;
+  --mouth: #4a3038;
+  --eye: #4f93a8;
   --eye-shine: #ffffff;
   --cheek: rgba(239, 167, 189, 0.28);
   --glow: rgba(123, 183, 201, 0.25);
@@ -541,7 +725,10 @@ body[data-skin="circuit"] {
   --fur: #aeb8ff;
   --fur-2: #8792e2;
   --inner: #ffb7d5;
-  --eye: #111216;
+  --skin: #f2d9e6;
+  --skin-2: #d4b0c2;
+  --mouth: #40263a;
+  --eye: #7c86e8;
   --eye-shine: #ffffff;
   --cheek: rgba(184, 255, 106, 0.24);
   --glow: rgba(174, 184, 255, 0.3);
@@ -563,7 +750,7 @@ body[data-skin="circuit"] .accessory.antenna {
 .mouth-drop {
   position: absolute;
   left: 50%;
-  top: 61.5%;
+  top: 54%;
   width: 66px;
   height: 48px;
   padding: 0;

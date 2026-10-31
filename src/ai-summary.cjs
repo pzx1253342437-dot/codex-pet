@@ -1,4 +1,5 @@
 const { trimSentence } = require('./local-summary.cjs');
+const { summarizeWithCodex } = require('./codex-summary.cjs');
 
 function getAiConfig() {
   if (process.env.AI_API_KEY) {
@@ -51,7 +52,7 @@ function normalizeList(value, limit) {
 
 async function summarizeWithAi(input) {
   const config = getAiConfig();
-  if (!config) return null;
+  if (!config) return summarizeWithCodex(input);
 
   const title = String(input.title || '').trim();
   const url = String(input.url || '').trim();
@@ -62,6 +63,9 @@ async function summarizeWithAi(input) {
   const longPrompt = isVideo
     ? '这是视频内容，longSummary 要按内容顺序写四到八段，覆盖开头、主要观点、例子和结尾。'
     : '这是网页内容，longSummary 写四到六段，按原文逻辑展开。';
+  const sourcePrompt = isVideo
+    ? '字幕来自语音识别，可能有错字、口头语、重复和缺失标点。按意思整理，不要逐句转写，也不要补原片没有的内容。'
+    : '';
 
   const systemPrompt = [
     '你是内容摘要助手。只根据用户给出的正文写摘要，不补充正文没有的信息。',
@@ -71,6 +75,7 @@ async function summarizeWithAi(input) {
     'bullets 是四到六条关键信息，每条尽量短。',
     'keyPoints 是三条最值得记住的短句。',
     longPrompt,
+    sourcePrompt,
     '如果正文明显不完整，在 longSummary 末尾直接写明缺了哪些信息，不要自行猜测。'
   ].join('\n');
 

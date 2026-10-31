@@ -45,16 +45,20 @@ app.whenReady().then(async () => {
     "})()"
   );
 
-  await new Promise((resolve) => setTimeout(resolve, 4000));
-  const state = await window.webContents.executeJavaScript(
-    "({" +
-    "title: document.getElementById('resultTitle').textContent," +
-    "tldr: document.getElementById('resultTldr').textContent," +
-    "resultVisible: !document.getElementById('result').classList.contains('hidden')," +
-    "error: document.getElementById('errorText').textContent," +
-    "bodyClass: document.body.className" +
-    "})"
-  );
+  let state = null;
+  for (let attempt = 0; attempt < 120; attempt += 1) {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    state = await window.webContents.executeJavaScript(
+      "({" +
+      "title: document.getElementById('resultTitle').textContent," +
+      "tldr: document.getElementById('resultTldr').textContent," +
+      "resultVisible: !document.getElementById('result').classList.contains('hidden')," +
+      "error: document.getElementById('errorText').textContent," +
+      "bodyClass: document.body.className" +
+      "})"
+    );
+    if (state.resultVisible || state.error) break;
+  }
   console.log(JSON.stringify(state, null, 2));
   const image = await window.webContents.capturePage();
   fs.writeFileSync(path.join(__dirname, '..', 'docs', 'pet-live.png'), image.toPNG());

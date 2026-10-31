@@ -1,12 +1,32 @@
-const { app, BrowserWindow, ipcMain, screen, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, screen, session, shell } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const { summarizeUrl } = require('../src/summarize.cjs');
 const { loadEnv } = require('../src/env.cjs');
+const { normalizeBilibiliCookie, writeBilibiliCookie } = require('../src/bili-cookie.cjs');
 
 loadEnv();
 
 let petWindow = null;
+
+const ENV_PATH = path.join(__dirname, '..', '.env');
+
+function saveBilibiliCookie(cookie) {
+  writeBilibiliCookie(ENV_PATH, cookie);
+  process.env.BILIBILI_COOKIE = cookie;
+}
+
+async function readBiliCookie(ses) {
+  const cookies = await ses.cookies.get({});
+  const picked = cookies.filter((item) => /(^|\.)bilibili\.com$/i.test(item.domain || ''));
+  if (!picked.some((item) => item.name === 'SESSDATA' && item.value)) return '';
+  const names = ['SESSDATA', 'bili_jct', 'DedeUserID', 'DedeUserID__ckMd5', 'sid'];
+  return names
+    .map((name) => picked.find((item) => item.name === name && item.value))
+    .filter(Boolean)
+    .map((item) => item.name + '=' + item.value)
+    .join('; ');
+}
 
 function createWindow() {
   const workArea = screen.getPrimaryDisplay().workArea;
@@ -104,6 +124,65 @@ ipcMain.handle('pet:open-external', async (_event, url) => {
     await shell.openExternal(url);
   }
   return true;
+});
+
+let biliLoginWindow = null;
+
+ipcMain.handle('pet:bili-login', () => new Promise((resolve) => {
+  if (biliLoginWindow && !biliLoginWindow.isDestroyed()) {
+    biliLoginWindow.focus();
+    resolve({ ok: false, error: '登录窗口已经开着' });
+    return;
+  }
+  const ses = session.fromPartition('persist:bili-login');
+  const loginWindow = new BrowserWindow({
+    width: 1000,
+    height: 720,
+    title: '登录 B 站',
+    parent: petWindow || undefined,
+    autoHideMenuBar: true,
+    backgroundColor: '#ffffff',
+    webPreferences: {
+      partition: 'persist:bili-login',
+      contextIsolation: true,
+      nodeIntegration: false
+    }
+  });
+  biliLoginWindow = loginWindow;
+  let settled = false;
+  const timer = setInterval(async () => {
+    try {
+      const cookie = await readBiliCookie(ses);
+      if (!cookie) return;
+      saveBilibiliCookie(cookie);
+      finish({ ok: true });
+    } catch {
+      // 页面还没加载完，下一轮再读
+    }
+  }, 1200);
+  function finish(result) {
+    if (settled) return;
+    settled = true;
+    clearInterval(timer);
+    if (loginWindow && !loginWindow.isDestroyed()) loginWindow.close();
+    biliLoginWindow = null;
+    resolve(result);
+  }
+  loginWindow.on('closed', () => {
+    biliLoginWindow = null;
+    if (settled) return;
+    settled = true;
+    clearInterval(timer);
+    resolve({ ok: false, error: '登录窗口关了' });
+  });
+  loginWindow.loadURL('https://passport.bilibili.com/login');
+}));
+
+ipcMain.handle('pet:bili-cookie', (_event, value) => {
+  const cookie = normalizeBilibiliCookie(value);
+  if (!cookie) return { ok: false, error: '没找到 SESSDATA，整段 Cookie 贴进来。' };
+  saveBilibiliCookie(cookie);
+  return { ok: true };
 });
 
 ipcMain.on('pet:close', () => {
