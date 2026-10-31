@@ -10,6 +10,7 @@
 <body data-skin="ink">
   <main class="window" id="window">
     <div class="top-actions no-drag">
+      <button class="chip" id="sizeBtn" type="button">大小</button>
       <button class="chip" id="skinBtn" type="button">换肤</button>
       <button class="icon-btn" id="closeBtn" type="button" aria-label="关闭">×</button>
     </div>
@@ -76,79 +77,104 @@
     <div class="pet-wrap" id="petWrap">
       <div class="pet-halo"></div>
       <div class="pet-stage">
-      <svg class="pet" viewBox="0 0 260 300" role="img" aria-label="小码猫娘桌宠">
-        <ellipse class="pet-shadow" cx="130" cy="288" rx="72" ry="9"/>
+<svg class="pet" viewBox="0 0 260 300" role="img" aria-label="小码猫娘桌宠">
+        <ellipse class="pet-shadow" cx="130" cy="290" rx="64" ry="8"/>
 
-        <path class="tail" d="M168 244 C204 246 224 226 222 202 C220 186 210 178 200 181"/>
-        <circle class="tail-tip" cx="200" cy="181" r="8"/>
+        <path class="tail" d="M168 224 C204 228 224 208 222 186 C220 170 208 164 199 170"/>
+        <circle class="tail-tip" cx="198" cy="170" r="7"/>
 
-        <path class="leg" d="M113 244 L111 272"/>
-        <path class="leg" d="M147 244 L149 272"/>
-        <path class="sock" d="M112 258 L111 269"/>
-        <path class="sock" d="M148 258 L149 269"/>
-        <path class="shoe" d="M97 275 C97 269 103 266 111 266 C119 266 123 270 123 276 L123 281 C123 283 121 284 119 284 L101 284 C99 284 97 283 97 281 Z"/>
-        <path class="shoe" d="M137 276 C137 270 141 266 149 266 C157 266 163 269 163 275 L163 281 C163 283 161 284 159 284 L141 284 C139 284 137 283 137 281 Z"/>
+        <path class="hair" d="M84 96 C80 130 80 166 84 194 C90 202 104 204 114 198 L124 214 L130 196 L136 214 L146 198 C156 204 170 202 176 194 C180 166 180 130 176 96 Z"/>
 
-        <path class="body" d="M104 178 C98 200 90 226 84 250 C100 257 160 257 176 250 C170 226 162 200 156 178 Z"/>
-        <circle class="sleeve" cx="103" cy="183" r="9"/>
-        <circle class="sleeve" cx="157" cy="183" r="9"/>
-        <path class="arm" d="M104 186 C94 198 88 210 86 220"/>
-        <path class="arm" d="M156 186 C166 198 172 210 174 220"/>
-        <circle class="cuff" cx="85" cy="217" r="6"/>
-        <circle class="cuff" cx="175" cy="217" r="6"/>
-        <circle class="hand" cx="85" cy="223" r="6"/>
-        <circle class="hand" cx="175" cy="223" r="6"/>
-        <path class="trim" d="M84 250 C100 257 160 257 176 250"/>
-        <path class="collar" d="M112 179 C118 187 142 187 148 179"/>
-        <path class="belt" d="M93 211 C108 217 152 217 167 211"/>
-        <circle class="belt-knot" cx="130" cy="214" r="3"/>
-        <path class="bow" d="M130 184 L117 176 L117 192 Z"/>
-        <path class="bow" d="M130 184 L143 176 L143 192 Z"/>
-        <circle class="bow-knot" cx="130" cy="184" r="3.6"/>
+        <path class="leg" d="M114 230 L112 252"/>
+        <path class="leg" d="M146 230 L148 252"/>
+        <path class="sock" d="M113 250 L111 274"/>
+        <path class="sock" d="M147 250 L149 274"/>
+        <path class="sock-top" d="M113 250 L112 253"/>
+        <path class="sock-top" d="M147 250 L148 253"/>
+        <path class="shoe" d="M100 276 C100 271 105 268 112 268 C119 268 123 272 123 277 L123 282 C123 284 121 285 119 285 L103 285 C101 285 100 284 100 282 Z"/>
+        <path class="shoe" d="M137 277 C137 272 141 268 148 268 C155 268 160 271 160 276 L160 282 C160 284 159 285 157 285 L141 285 C139 285 137 284 137 282 Z"/>
 
-        <rect class="neck" x="120" y="164" width="20" height="18" rx="8"/>
+        <path class="body" d="M104 162 C100 174 100 186 102 197 C96 208 90 222 86 234 C100 240 160 240 174 234 C170 222 164 208 158 197 C160 186 160 174 156 162 C148 156 112 156 104 162 Z"/>
+        <path class="pleat" d="M118 198 L114 234"/>
+        <path class="pleat" d="M130 198 L130 236"/>
+        <path class="pleat" d="M142 198 L146 234"/>
+        <path class="trim" d="M86 234 C100 240 160 240 174 234"/>
+        <path class="collar" d="M114 162 C120 168 140 168 146 162"/>
+        <path class="bow" d="M130 172 L118 165 L118 179 Z"/>
+        <path class="bow" d="M130 172 L142 165 L142 179 Z"/>
+        <circle class="bow-knot" cx="130" cy="172" r="3.4"/>
+        <path class="belt" d="M101 196 C112 200 148 200 159 196"/>
+        <circle class="belt-knot" cx="130" cy="197" r="2.8"/>
 
-        <ellipse class="hair" cx="130" cy="122" rx="63" ry="60"/>
-        <path class="ear" d="M92 82 L78 38 L112 60 Z"/>
-        <path class="ear" d="M168 82 L182 38 L148 60 Z"/>
-        <path class="ear-inner" d="M92 75 L84 50 L104 62 Z"/>
-        <path class="ear-inner" d="M168 75 L176 50 L156 62 Z"/>
+        <path class="arm" d="M104 170 L93 192 L88 209"/>
+        <path class="arm" d="M156 170 L167 192 L172 209"/>
+        <circle class="cuff" cx="88" cy="210" r="5"/>
+        <circle class="cuff" cx="172" cy="210" r="5"/>
+        <circle class="hand" cx="87" cy="215" r="5.5"/>
+        <circle class="hand" cx="173" cy="215" r="5.5"/>
+        <circle class="sleeve" cx="104" cy="166" r="9"/>
+        <circle class="sleeve" cx="156" cy="166" r="9"/>
 
-        <ellipse class="face" cx="130" cy="128" rx="47" ry="45"/>
+        <rect class="neck" x="121" y="144" width="18" height="18" rx="8"/>
+        <path class="choker" d="M118 151 Q130 157 142 151"/>
+        <circle class="bell" cx="130" cy="156" r="2.6"/>
 
-        <path class="hair" d="M67 128 C67 88 94 62 130 62 C166 62 193 88 193 128 C186 124 180 118 176 110 C170 122 160 128 150 126 C144 134 136 136 130 128 C124 136 116 134 110 126 C100 128 90 122 84 110 C80 118 74 124 67 128 Z"/>
-        <path class="hair" d="M67 120 C56 142 54 166 58 190 C64 196 74 194 78 186 C72 164 72 140 76 122 Z"/>
-        <path class="hair" d="M193 120 C204 142 206 166 202 190 C196 196 186 194 182 186 C188 164 188 140 184 122 Z"/>
-        <path class="hair-shine" d="M86 96 C94 84 106 78 118 77"/>
+        <g class="head" transform="translate(130 104) scale(0.92) translate(-130 -104)">
+        <ellipse class="hair" cx="130" cy="102" rx="50" ry="48"/>
+        <path class="ear" d="M102 72 C96 56 90 40 88 32 C99 36 116 47 123 57 C115 61 107 67 102 72 Z"/>
+        <path class="ear" d="M158 72 C164 56 170 40 172 32 C161 36 144 47 137 57 C145 61 153 67 158 72 Z"/>
+        <path class="ear-inner" d="M103 68 C99 56 95 46 94 40 C102 44 112 51 117 58 C111 60 106 64 103 68 Z"/>
+        <path class="ear-inner" d="M157 68 C161 56 165 46 166 40 C158 44 148 51 143 58 C149 60 154 64 157 68 Z"/>
 
-        <ellipse class="eye" cx="108" cy="141" rx="11" ry="13"/>
-        <ellipse class="eye" cx="152" cy="141" rx="11" ry="13"/>
-        <circle class="eye-shine" cx="104" cy="136" r="3.6"/>
-        <circle class="eye-shine" cx="148" cy="136" r="3.6"/>
-        <circle class="eye-shine small" cx="112" cy="146" r="1.7"/>
-        <circle class="eye-shine small" cx="156" cy="146" r="1.7"/>
-        <path class="lash" d="M98 134 L92 129"/>
-        <path class="lash" d="M162 134 L168 129"/>
+        <path class="face" d="M88 102 C88 128 104 148 130 150 C156 148 172 128 172 102 C172 82 154 68 130 68 C106 68 88 82 88 102 Z"/>
 
-        <ellipse class="cheek" cx="88" cy="158" rx="9" ry="4.5"/>
-        <ellipse class="cheek" cx="172" cy="158" rx="9" ry="4.5"/>
-        <path class="nose" d="M127 152 L133 152 L130 156 Z"/>
-        <ellipse class="mouth-inner" cx="130" cy="166" rx="5" ry="3"/>
-        <path class="mouth" d="M122 161 Q127 167 130 162 Q133 167 138 161"/>
+        <path class="hair" d="M86 104 C84 72 104 54 130 54 C156 54 176 72 174 104 C170 96 166 88 162 80 C158 92 150 100 142 102 C138 94 134 90 130 90 C126 90 122 94 118 102 C110 100 102 92 98 80 C94 88 90 96 86 104 Z"/>
+        <path class="hair" d="M86 96 C78 120 76 148 82 172 L88 178 L92 166 C88 146 88 120 92 98 Z"/>
+        <path class="hair" d="M174 96 C182 120 184 148 178 172 L172 178 L168 166 C172 146 172 120 168 98 Z"/>
+        <path class="hair-shine" d="M100 84 C106 72 116 64 126 62"/>
+        <path class="hair-shine" d="M88 124 C86 146 86 166 88 182"/>
+        <path class="hair-shine" d="M172 124 C174 146 174 166 172 182"/>
+        <path class="hair-line" d="M94 94 C100 76 110 66 122 62"/>
+        <path class="hair-line" d="M166 94 C160 76 150 66 138 62"/>
+        <path class="ahoge" d="M126 58 C124 44 134 36 144 32"/>
+        <path class="ribbon" d="M84 116 L74 109 L74 123 Z"/>
+        <path class="ribbon" d="M84 116 L94 109 L94 123 Z"/>
+        <circle class="ribbon-knot" cx="84" cy="116" r="3"/>
+
+        <path class="brow" d="M104 108 Q113 103 122 106"/>
+        <path class="brow" d="M138 106 Q147 103 156 108"/>
+
+        <ellipse class="eye" cx="113" cy="124" rx="10" ry="11.5"/>
+        <ellipse class="eye" cx="147" cy="124" rx="10" ry="11.5"/>
+        <ellipse class="pupil" cx="113" cy="125" rx="4.6" ry="6"/>
+        <ellipse class="pupil" cx="147" cy="125" rx="4.6" ry="6"/>
+        <circle class="eye-shine" cx="109.5" cy="119" r="3.4"/>
+        <circle class="eye-shine" cx="143.5" cy="119" r="3.4"/>
+        <circle class="eye-shine small" cx="116" cy="129" r="1.5"/>
+        <circle class="eye-shine small" cx="150" cy="129" r="1.5"/>
+        <path class="lash" d="M102 118 Q113 111 124 118"/>
+        <path class="lash" d="M136 118 Q147 111 158 118"/>
+
+        <path class="nose-line" d="M128 134 Q130 136 132 134"/>
+        <ellipse class="mouth-inner" cx="130" cy="142" rx="4" ry="2.6"/>
+        <path class="mouth" d="M125 140 Q130 145 135 140"/>
+        <ellipse class="cheek" cx="100" cy="137" rx="7" ry="3.5"/>
+        <ellipse class="cheek" cx="160" cy="137" rx="7" ry="3.5"/>
 
         <g class="accessory star">
-          <path d="M196 94 L201 105 L213 107 L204 115 L207 127 L196 121 L185 127 L188 115 L179 107 L191 105 Z"/>
+          <path d="M174 86 L178 95 L188 96 L181 102 L183 112 L174 107 L165 112 L167 102 L160 96 L170 95 Z"/>
         </g>
         <g class="accessory antenna">
-          <path d="M130 63 C130 48 144 42 148 28"/>
-          <circle cx="150" cy="25" r="6"/>
+          <path d="M130 53 C130 40 142 34 146 22"/>
+          <circle cx="148" cy="19" r="5.5"/>
         </g>
         <g class="accessory glasses">
-          <circle cx="108" cy="141" r="16"/>
-          <circle cx="152" cy="141" r="16"/>
-          <path d="M124 141 H136"/>
+          <circle cx="113" cy="124" r="15"/>
+          <circle cx="147" cy="124" r="15"/>
+          <path d="M128 124 H132"/>
         </g>
-      </svg>
+      </g>
+    </svg>
       <button class="mouth-drop no-drag" id="mouthDrop" type="button" aria-label="把链接拖到这里">
         <span>拖到这里</span>
       </button>
@@ -160,6 +186,14 @@
       <button type="button" data-skin="ink"><i class="swatch ink"></i>墨墨</button>
       <button type="button" data-skin="cloud"><i class="swatch cloud"></i>云朵</button>
       <button type="button" data-skin="circuit"><i class="swatch circuit"></i>电路兔</button>
+    </div>
+
+    <div class="size-menu hidden no-drag" id="sizeMenu">
+      <div class="size-head">
+        <span>宠物大小</span>
+        <span id="sizeValue">100%</span>
+      </div>
+      <input id="sizeRange" type="range" min="70" max="120" step="5" value="100">
     </div>
   </main>
   <script src="./app.js"></script>

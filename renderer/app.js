@@ -37,6 +37,10 @@
     dropHint: $('dropHint'),
     skinBtn: $('skinBtn'),
     skinMenu: $('skinMenu'),
+    sizeBtn: $('sizeBtn'),
+    sizeMenu: $('sizeMenu'),
+    sizeRange: $('sizeRange'),
+    sizeValue: $('sizeValue'),
     closeBtn: $('closeBtn')
   };
 
@@ -58,6 +62,14 @@
     for (const button of elements.skinMenu.querySelectorAll('[data-skin]')) {
       button.classList.toggle('is-active', button.dataset.skin === skin);
     }
+  }
+
+  function applyScale(value) {
+    const size = Math.min(120, Math.max(70, Number(value) || 100));
+    document.documentElement.style.setProperty('--pet-scale', String(size / 100));
+    localStorage.setItem('codex-pet-scale', String(size));
+    elements.sizeRange.value = String(size);
+    elements.sizeValue.textContent = size + '%';
   }
 
   function showOnly(name) {
@@ -239,6 +251,7 @@
 
   elements.skinBtn.addEventListener('click', (event) => {
     event.stopPropagation();
+    elements.sizeMenu.classList.add('hidden');
     elements.skinMenu.classList.toggle('hidden');
   });
 
@@ -252,6 +265,21 @@
 
   document.addEventListener('click', () => {
     elements.skinMenu.classList.add('hidden');
+    elements.sizeMenu.classList.add('hidden');
+  });
+
+  elements.sizeBtn.addEventListener('click', (event) => {
+    event.stopPropagation();
+    elements.skinMenu.classList.add('hidden');
+    elements.sizeMenu.classList.toggle('hidden');
+  });
+
+  elements.sizeMenu.addEventListener('click', (event) => {
+    event.stopPropagation();
+  });
+
+  elements.sizeRange.addEventListener('input', () => {
+    applyScale(elements.sizeRange.value);
   });
 
   elements.longToggle.addEventListener('click', () => {
@@ -364,6 +392,7 @@
   });
 
   applySkin(skin);
+  applyScale(localStorage.getItem('codex-pet-scale') || 100);
   setupDrop();
   showEmpty();
 

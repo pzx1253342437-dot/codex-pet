@@ -1,4 +1,5 @@
 :root {
+  --pet-scale: 1;
   --bg: #111216;
   --panel: rgba(17, 18, 22, 0.94);
   --panel-2: #1b1c23;
@@ -452,12 +453,13 @@ button {
   position: absolute;
   left: 50%;
   bottom: 24px;
-  width: 300px;
-  height: 210px;
+  width: calc(300px * var(--pet-scale, 1));
+  height: calc(210px * var(--pet-scale, 1));
   transform: translateX(-50%);
   background: radial-gradient(circle, var(--glow, rgba(222, 111, 148, 0.28)) 0%, transparent 68%);
   opacity: 0.7;
   pointer-events: none;
+  transition: width 240ms ease, height 240ms ease;
 }
 
 .pet-stage {
@@ -465,7 +467,9 @@ button {
   width: 270px;
   height: 310px;
   flex: none;
-  transition: width 240ms ease, height 240ms ease;
+  transform: scale(var(--pet-scale, 1));
+  transform-origin: bottom center;
+  transition: width 240ms ease, height 240ms ease, transform 240ms ease;
 }
 
 .pet {
@@ -482,8 +486,8 @@ body.has-result .pet-stage {
 }
 
 body.has-result .pet-halo {
-  width: 200px;
-  height: 145px;
+  width: calc(200px * var(--pet-scale, 1));
+  height: calc(145px * var(--pet-scale, 1));
 }
 
 body.has-result .bubble {
@@ -491,7 +495,7 @@ body.has-result .bubble {
 }
 
 body.has-result .pet-wrap {
-  min-height: 200px;
+  min-height: calc(200px * var(--pet-scale, 1));
 }
 
 .pet-shadow {
@@ -532,12 +536,13 @@ body.has-result .pet-wrap {
 .arm,
 .leg {
   fill: none;
-  stroke: var(--skin);
-  stroke-width: 12;
+  stroke: var(--fur);
+  stroke-width: 11;
   stroke-linecap: round;
 }
 
 .leg {
+  stroke-width: 12;
   stroke: var(--fur);
 }
 
@@ -604,7 +609,7 @@ body.has-result .pet-wrap {
 .tail {
   fill: none;
   stroke: var(--fur);
-  stroke-width: 14;
+  stroke-width: 12;
   stroke-linecap: round;
   transform-box: fill-box;
   transform-origin: 10% 80%;
@@ -645,6 +650,77 @@ body.has-result .pet-wrap {
   stroke: var(--mouth);
   stroke-width: 2;
   stroke-linecap: round;
+}
+
+.pupil {
+  fill: #2b1720;
+  opacity: 0.78;
+}
+
+.brow {
+  fill: none;
+  stroke: var(--fur-2);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+
+.hair-line {
+  fill: none;
+  stroke: var(--fur-2);
+  stroke-width: 2;
+  stroke-linecap: round;
+  opacity: 0.9;
+}
+
+.nose-line {
+  fill: none;
+  stroke: var(--mouth);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  opacity: 0.65;
+}
+
+.pleat {
+  fill: none;
+  stroke: var(--fur-2);
+  stroke-width: 2;
+  opacity: 0.55;
+}
+
+.sock-top {
+  fill: none;
+  stroke: var(--inner);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.ahoge {
+  fill: none;
+  stroke: var(--fur);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.ribbon {
+  fill: var(--accent);
+}
+
+.ribbon-knot {
+  fill: var(--inner);
+}
+
+.choker {
+  fill: none;
+  stroke: #2b1720;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.bell {
+  fill: var(--inner);
+  stroke: var(--fur-2);
+  stroke-width: 1;
 }
 
 .cheek {
@@ -750,7 +826,7 @@ body[data-skin="circuit"] .accessory.antenna {
 .mouth-drop {
   position: absolute;
   left: 50%;
-  top: 54%;
+  top: 46%;
   width: 66px;
   height: 48px;
   padding: 0;
@@ -962,6 +1038,36 @@ body[data-skin="circuit"] .accessory.antenna {
 .skin-menu button.is-active {
   color: var(--accent-2);
   background: rgba(222, 111, 148, 0.1);
+}
+
+.size-menu {
+  position: absolute;
+  top: 50px;
+  right: 14px;
+  z-index: 9;
+  width: 186px;
+  padding: 10px 12px 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.size-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: var(--text);
+  font-size: 11px;
+}
+
+#sizeValue {
+  color: var(--accent-2);
+}
+
+.size-menu input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
 }
 
 .pet-wrap.is-error .pet {
